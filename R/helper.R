@@ -15,11 +15,11 @@ SafeReadCSV <- function(fileName) {
 
 RemoveParticipants <- function(original.df, ParticipantsToRemove, report=TRUE) {
 
-    OriginallyRunN <- length(unique(original.df$Subject))
+    OriginallyRunN <- length(unique(original.df$subjID))
     pruned.df <- original.df %>%
-        filter(!Subject %in% ParticipantsToRemove)
+        filter(!subjID %in% ParticipantsToRemove)
 
-    FinalN <- length(unique(pruned.df$Subject))
+    FinalN <- length(unique(pruned.df$subjID))
 
     if (report) {
         cat("Original n =", OriginallyRunN, fill=TRUE)

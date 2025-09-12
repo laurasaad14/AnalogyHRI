@@ -6,54 +6,135 @@
 ### Experiment setup ###
 ########################
 
-experimentName <- "SoA1"
+experimentName <- "Analogy1"
 whoami <- Sys.info()[["user"]]
 if (whoami == "trafton") {
     workingDirectory <- "~/Documents/graphics/SenseOfAgency/"
 } else if (whoami == "saad-admin") {
-  workingDirectory <- "~/SenseofAgency/"
+  workingDirectory <- "~/AnalogyHRI/"
 }
 
 source(paste0(workingDirectory, "R/helper.R"))
 graphSaveDirectory <- paste0(workingDirectory, "graphs/", experimentName, "/")
-dataDirectory <- paste0(workingDirectory, "data/raw/", experimentName, "/")
+dataDirectory <- paste0(workingDirectory, "data/processed/", experimentName, "/")
 setwd(workingDirectory)
 VerifyPathIsSafe(graphSaveDirectory)
 VerifyPathIsSafe(dataDirectory)
-UseSplitConditions <- FALSE ## FALSE
 
 source(paste0(workingDirectory, "R/GetData", experimentName, ".R"))
 
-########################
-### very simple hist ###
-########################
 
-# converting responses to numeric for visualization
-SoA1.df <- mutate(SoA1.df, Response_num = as.numeric(unlist(Response)))
-# removing responses to attn check from Response_num variable
-SoA1.df <- mutate(SoA1.df, Response_num = if_else(Question=="Please select 3 for this question",NA,Response_num))
-# Please select 3 for this question
+library(dplyr)
+library(tidyr)
+library(ggplot2)
 
-# overall histogram
-p <- ggplot(SoA1.df, aes(x=Response_num))
-p <- p + geom_histogram()
-print(p)
+# PLOT PA SCALE ACROSS CONDITIONS
 
-ggsave(paste0(graphSaveDirectory, "overallHist_", dataDate, ".pdf"))
+PA_scale <- c("PA_1", "PA_2", "PA_3", "PA_4", "actor")
 
-# histograms per condition
-h_1 <- ggplot(SoA1.df, aes(x=Response_num)) + geom_histogram()
-h_1 <- h_1 + facet_wrap(vars(SoA1.df$Condition)) +
-  xlab("Likert Response (1 = No Control, 6= Total Control)") + ylab("count") + 
-  ggtitle("Response by Condition") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  scale_x_continuous(breaks = seq(1,6, by = 1)) +
-  scale_y_continuous(breaks = seq(0,15, by = 3))
-print(h_1)
-ggsave(paste0(graphSaveDirectory, "hist_per_cond", dataDate, ".pdf"))
+Analogy1.df <- Analogy1.df %>%
+  rowwise() %>%
+  mutate(PA_mean = mean(c_across(PA_scale), na.rm = TRUE)) %>%
+  ungroup()
+
+Analogy1.df %>%
+  ggplot(aes(x=condition, y=PA_mean)) +
+  stat_summary(fun = "mean", geom = "bar", fill="gray") +  
+  stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width=.2) +
+  xlab("Condition") +
+  ylim(0, 7) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank()) +
+  # theme(axis.text.x = element_text(angle = 45)) +
+  theme(text=element_text(size=22)) + theme(plot.title = element_text(hjust=0.5)) +
+  # facet_wrap (~Trial) +
+  ggtitle("Perceived Agency")
+ggsave(paste0(graphSaveDirectory, "PA_byCondition", dataDate, ".pdf"))
 
 
-# responses by condition and person action/outcome/overall
+# plot emotion (SSRA) across conditions
+SSRA_scale <- c("SSRA_1", "SSRA_2", "SSRA_3")
+
+Analogy1.df <- Analogy1.df %>%
+  rowwise() %>%
+  mutate(SSRA_mean = mean(c_across(SSRA_scale), na.rm = TRUE)) %>%
+  ungroup()
+
+Analogy1.df %>%
+  ggplot(aes(x=condition, y=SSRA_mean)) +
+  stat_summary(fun = "mean", geom = "bar", fill="gray") +  
+  stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width=.2) +
+  xlab("Condition") +
+  ylim(0, 7) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank()) +
+  # theme(axis.text.x = element_text(angle = 45)) +
+  theme(text=element_text(size=22)) + theme(plot.title = element_text(hjust=0.5)) +
+  # facet_wrap (~Trial) +
+  ggtitle("Emotion")
+ggsave(paste0(graphSaveDirectory, "SSRA_byCondition", dataDate, ".pdf"))
+
+
+
+# plot custom items across conditions
+custom_scale <- c("smell", "taste", "touch", "see", "hear", "walk")
+
+Analogy1.df <- Analogy1.df %>%
+  rowwise() %>%
+  mutate(custom_mean = mean(c_across(custom_scale), na.rm = TRUE)) %>%
+  ungroup()
+
+Analogy1.df %>%
+  ggplot(aes(x=condition, y=custom_mean)) +
+  stat_summary(fun = "mean", geom = "bar", fill="gray") +  
+  stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width=.2) +
+  xlab("Condition") +
+  ylim(0, 7) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank()) +
+  # theme(axis.text.x = element_text(angle = 45)) +
+  theme(text=element_text(size=22)) + theme(plot.title = element_text(hjust=0.5)) +
+  # facet_wrap (~Trial) +
+  ggtitle("Custom Items")
+ggsave(paste0(graphSaveDirectory, "custom_byCondition", dataDate, ".pdf"))
+
+
+
+# plot whether Ps chose connected robot as more similar to human 
+
+dat_first <- Analogy1.df %>%
+  group_by(subjID) %>%
+  slice_head(n = 1) %>%
+  ungroup()
+
+# Count TRUE/FALSE per condition
+counts_connected <- table(dat_first$conPos1)
+print(counts_connected)
+
+# Plot 
+counts_df <- as.data.frame(counts_connected)
+names(counts_df) <- c("conPos1", "Frequency")
+
+ggplot(counts_df, aes(x = conPos1, y = Frequency)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  geom_text(aes(label = Frequency), vjust = -0.5) +  # counts above bars
+  theme_minimal() +
+  labs(title = "P Chose Connected Robot More Similar to Human", x = "Connected in Position 1?", y = "Frequency")
+ggsave(paste0(graphSaveDirectory, "DidPChooseConnected", dataDate, ".pdf"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #################################
