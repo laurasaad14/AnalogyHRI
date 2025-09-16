@@ -54,19 +54,6 @@ ggsave(paste0(graphSaveDirectory, "DidPChooseConnected", dataDate, ".pdf"))
 
 
 
-
-# Convert frequency column into a vector
-counts_vector <- counts_df$Frequency
-names(counts_vector) <- counts_df$conPos1
-
-# Run chi-square test
-chi_result <- chisq.test(counts_vector)
-
-# Print results
-print(chi_result)
-
-
-
 # plot whether Ps chose connected robot as more likely to have emotion 
 
 # Count TRUE/FALSE per condition
@@ -84,16 +71,6 @@ ggplot(countsEMO_df, aes(x = conPos1EMO, y = Frequency)) +
   labs(title = "P Chose Connected Robot More Likely to have Emotion", x = "Connected in Position 1?", y = "Frequency")
 ggsave(paste0(graphSaveDirectory, "DidPChooseConnectedEMO", dataDate, ".pdf"))
 
-
-# Convert frequency column into a vector
-countsEMO_vector <- countsEMO_df$Frequency
-names(countsEMO_vector) <- countsEMO_df$conPos1EMO
-
-# Run chi-square test
-chi_resultEMO <- chisq.test(countsEMO_vector)
-
-# Print results
-print(chi_resultEMO)
 
 
 # plot custom items across conditions
