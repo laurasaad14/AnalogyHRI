@@ -108,7 +108,7 @@ ggplot(dat_first, aes(x = rank_sim_recode, y = GATORS_mean)) +
     title = paste0("Correlation Between GATORS and Similarity Ranking = ", round(cor_GP_sim$estimate, 2),
                    ", p = ", signif(cor_GP_sim$p.value, 3))
   )
-
+ggsave(paste0(graphSaveDirectory, "cor_GP_similarity", dataDate, ".pdf"))
 
 # what is relationship between NARS and whether Ps picked connected as more similar to Sarah
 
@@ -125,6 +125,7 @@ ggplot(dat_first, aes(x = rank_sim_recode, y = NARS_mean)) +
     title = paste0("Correlation Between NARS and Similarity Ranking = ", round(cor_NARS_sim$estimate, 2),
                    ", p = ", signif(cor_NARS_sim$p.value, 3))
   )
+ggsave(paste0(graphSaveDirectory, "cor_NARS_similarity", dataDate, ".pdf"))
 
 # what is relationship between RAS and whether Ps picked connected as more similar to Sarah
 
@@ -141,6 +142,7 @@ ggplot(dat_first, aes(x = rank_sim_recode, y = RAS_mean)) +
     title = paste0("Correlation Between RAS and Similarity Ranking = ", round(cor_RAS_sim$estimate, 2),
                    ", p = ", signif(cor_RAS_sim$p.value, 3))
   )
+ggsave(paste0(graphSaveDirectory, "cor_RAS_similarity", dataDate, ".pdf"))
 
 
 # what is relationship between GATORS P- and whether Ps picked connected as more likely to have emotions
@@ -158,6 +160,7 @@ ggplot(dat_first, aes(x = rank_emo_recode, y = GATORS_mean)) +
     title = paste0("Correlation Between GATORS and Emotion Ranking = ", round(cor_GP_emo$estimate, 2),
                    ", p = ", signif(cor_GP_emo$p.value, 3))
   )
+ggsave(paste0(graphSaveDirectory, "cor_GP_emotion", dataDate, ".pdf"))
 
 # what is relationship between NARS and whether Ps picked connected as more likely to have emotions
 
@@ -174,6 +177,7 @@ ggplot(dat_first, aes(x = rank_emo_recode, y = NARS_mean)) +
     title = paste0("Correlation Between NARS and Emotion Ranking = ", round(cor_NARS_emo$estimate, 2),
                    ", p = ", signif(cor_NARS_emo$p.value, 3))
   )
+ggsave(paste0(graphSaveDirectory, "cor_NARS_emotion", dataDate, ".pdf"))
 
 # what is relationship between RAS and whether Ps picked connected as more likely to have emotions
 
@@ -190,6 +194,7 @@ ggplot(dat_first, aes(x = rank_emo_recode, y = RAS_mean)) +
     title = paste0("Correlation Between RAS and Emotion Ranking = ", round(cor_RAS_emo$estimate, 2),
                    ", p = ", signif(cor_RAS_emo$p.value, 3))
   )
+ggsave(paste0(graphSaveDirectory, "cor_RAS_emotion", dataDate, ".pdf"))
 
 
 cor.test(dat_first$GATORS_mean, dat_first$RAS_mean, type = "pearson")
