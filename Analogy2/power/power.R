@@ -17,3 +17,4 @@ w # effect size for emotion ranking
 
 # Chi-square power calculation
 pwr.chisq.test(w = w, df = 1, sig.level = 0.05, power = 0.8)
+

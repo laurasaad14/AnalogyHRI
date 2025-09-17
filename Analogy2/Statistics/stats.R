@@ -192,6 +192,10 @@ ggplot(dat_first, aes(x = rank_emo_recode, y = RAS_mean)) +
   )
 
 
+cor.test(dat_first$GATORS_mean, dat_first$RAS_mean, type = "pearson")
+cor.test(dat_first$GATORS_mean, dat_first$NARS_mean, type = "pearson")
+cor.test(dat_first$NARS_mean, dat_first$RAS_mean, type = "pearson")
+
 ############# which scale predicts the ranking better?
 
 
