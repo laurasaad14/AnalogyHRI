@@ -72,6 +72,31 @@ ggplot(countsEMO_df, aes(x = conPos1EMO, y = Frequency)) +
 ggsave(paste0(graphSaveDirectory, "DidPChooseConnectedEMO", dataDate, ".pdf"))
 
 
+# perceived agency
+# plot custom items across conditions
+PA_scale <- c("PA1", "PA2", "PA3", "PA4", "actor")
+
+Analogy3.df <- Analogy3.df %>%
+  rowwise() %>%
+  mutate(PA_mean = mean(c_across(PA_scale), na.rm = TRUE)) %>%
+  ungroup()
+
+Analogy3.df %>%
+  filter(condition == "connected" | condition == "disconnected") %>%
+  ggplot(aes(x=condition, y=PA_mean)) +
+  stat_summary(fun = "mean", geom = "bar", fill="gray") +  
+  stat_summary(fun.data = mean_cl_boot, geom = "errorbar", width=.2) +
+  xlab("Condition") +
+  ylim(0, 7) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank()) +
+  # theme(axis.text.x = element_text(angle = 45)) +
+  theme(text=element_text(size=22)) + theme(plot.title = element_text(hjust=0.5)) +
+  # facet_wrap (~Trial) +
+  ggtitle("PA")
+ggsave(paste0(graphSaveDirectory, "PA_byCondition", dataDate, ".pdf"))
+
+
 
 # plot custom items across conditions
 custom_scale <- c("smell", "taste", "touch", "see", "hear", "walk")
@@ -130,8 +155,17 @@ ggsave(paste0(graphSaveDirectory, "custom_byConditionByItem", dataDate, ".pdf"))
 
 
 
+# qualitative data
+emo_exp <- Analogy3.df %>%
+  select(subjID, condition, CRDB_emoexp, DRCB_emoexp)
 
+emo_exp <- emo_exp %>%
+  group_by(subjID) %>%
+  slice_head(n = 1) %>%
+  ungroup() %>%
+  select(-condition)
 
+write.csv(emo_exp, file = "emotion_ranking_explanation.csv")
 
 
 

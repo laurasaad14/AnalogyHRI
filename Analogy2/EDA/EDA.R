@@ -128,7 +128,17 @@ ggsave(paste0(graphSaveDirectory, "custom_byConditionByItem", dataDate, ".pdf"))
 
 
 
+# qualitative data
+emo_exp <- Analogy2.df %>%
+  select(subjID, condition, CRDB_emoexp, DRCB_emoexp)
 
+emo_exp <- emo_exp %>%
+  group_by(subjID) %>%
+  slice_head(n = 1) %>%
+  ungroup() %>%
+  select(-condition)
+
+write.csv(emo_exp, file = "analogy2_emotion_ranking_explanation.csv")
 
 
 
