@@ -9,6 +9,7 @@ require(Hmisc) ## for stat_summary
 ########################
 
 dataFileName <- paste0(dataDirectory, "Analogy3_150Ps_9.19.25.csv") 
+dataFileName <- paste0(dataDirectory, "Analogy3_150Ps_9.23.25.csv") 
 dateExpr <- "\\d{1,2}.\\d{1,2}.\\d{4}"  ## super simple, easy to be wrong so check
 dataDate <- str_match(dataFileName, dateExpr)
 cat("This data was finished collected on", dataDate, fill=TRUE)
